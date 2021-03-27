@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MySoundBoard</string>
+    <string name="blankButton">- -</string>
+    <string name="button1">Cheering Crowd</string>
+    <string name="button2">Laughing</string>
+    <string name="button3">Clear Throat</string>
+
+</resources>
