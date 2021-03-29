@@ -8,7 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="button_resting_color">#FF6200EE</color>
+    <color name="button_empty_color">#FF6200EE</color>
+    <color name="button_resting_color">#9953FD</color>
     <color name="button_active_color">#FF03DAC5</color>
+    <color name="button_recording_color">#B50024</color>
 
 </resources>
