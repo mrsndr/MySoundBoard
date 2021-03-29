@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 
@@ -21,7 +23,8 @@ public class MainActivity extends AppCompatActivity {
     public Button btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9;
     boolean mpr1, mpr2, mpr3, mpr4, mpr5, mpr6, mpr7, mpr8, mpr9; // Stores player ready states
     MediaPlayer mp1, mp2, mp3, mp4, mp5, mp6, mp7, mp8, mp9;
-    String[] soundToPlay;
+    public String[] soundToPlay;
+    public String[] buttonNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
         btn8 = findViewById(R.id.button8);
         btn9 = findViewById(R.id.button9);
 
+
+
+
         mpr1 = mpr2 = mpr3 = mpr4 = mpr5 = mpr6 = mpr7 = mpr8 = mpr9 = true; // Set playback to the ready state
 
 
@@ -46,20 +52,33 @@ public class MainActivity extends AppCompatActivity {
         //getPlayerReady(mp4,R.raw.come_on); getPlayerReady(mp5,R.raw.come_on); getPlayerReady(mp6,R.raw.come_on);
 
         soundToPlay = new String[10];
+        buttonNames = new String[10];
         //soundToPlay[4] = R.raw.come_on; soundToPlay[5] = R.raw.come_on; soundToPlay[6] = R.raw.come_on;
+
+        btn6.setText(buttonNames[6]);
+
+
 
 
         btn5.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (soundToPlay[5] != "") {
-                    btn5.setText(R.string.blankButton);
-                    soundToPlay[5] = "";
-                }
+                longPress(5);
                 return true;
             }
         });
 
+
+        btn6.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                    btn6.setText(recordingActivity.getMyString());
+
+
+                return true;
+            }
+        });
 
 
     }
@@ -175,10 +194,19 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    public void longPress(int soundNumber) {
+
+        Intent goToRecordingPage = new Intent (this, recordingActivity.class);
+        //goToRecordingPage.putExtra("EXTRA_BUTTON_NAME", String.valueOf(bttn.getId()));
+        goToRecordingPage.putExtra("EXTRA_RECORDING_NUMBER", String.valueOf(soundNumber));
+        startActivity(goToRecordingPage);
+
+
+    }
 
 
 
-
-
-
+    public void setButtonNames(String buttonNames, int buttonNumber) {
+        this.buttonNames[buttonNumber] = buttonNames;
+    }
 }
