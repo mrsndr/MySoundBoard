@@ -22,55 +22,43 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 public class MainActivity extends AppCompatActivity {
     // Sounds from: https://www.pacdv.com/sounds/people_sounds.html
     public static final int REQUEST_AUDIO_PERMISSION_CODE = 1;
+    private static final String LOG_TAG = "AudioRecording";
 
-    //public Button btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9;
+    private boolean recording = false;
 
-    boolean mpr1, mpr2, mpr3;
     private int[] mpr; // Stores player states,
-
     private MediaPlayer[] mPlayer;
     private MediaRecorder[] mRecorder;
     private Button[] btn;
-    private String[] soundToPlay;
-    private String[] buttonNames;
-
-    private static final String LOG_TAG = "AudioRecording";
 
     private static String mFilePath = null;
     private String[] mFileName = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
-
-
-
-
-
+        // Set up the arrays
         mpr = new int[13]; // State: 0 Ready to record(empty) -- 1 Recording -- 2 Ready to play/re-record -- 3 Playing
         mRecorder = new MediaRecorder[13];
         mPlayer = new MediaPlayer[13];
         btn = new Button[13];
-        soundToPlay = new String[13];
-        buttonNames = new String[13];
 
-        for (int i =0; i == 12; i++) {
-            // Initialize all the possible recorders and players and buttons
+        // Initialize all the possible recorders and players and set the states to Ready to record(empty)
+        for (int i = 0; i < 13; i++) {
             mpr[i] = 0;
             mPlayer[i] = new MediaPlayer();
             mPlayer[i] = null;
-
-
-            //mRecorder[i] = new MediaRecorder();
         }
 
+        // Set the pre-recorded buttons to ready state
+        for (int i = 0; i < 4; i++) {
+            mpr[i] = 2;
+        }
 
-        // Find the buttons
+        // Find the buttons and load into array
         btn[1] = findViewById(R.id.button1);
         btn[2] = findViewById(R.id.button2);
         btn[3] = findViewById(R.id.button3);
@@ -83,30 +71,17 @@ public class MainActivity extends AppCompatActivity {
         btn[10] = findViewById(R.id.button10);
         btn[11] = findViewById(R.id.button11);
         btn[12] = findViewById(R.id.button12);
-        //int resourceId = getResources().getIdentifier("button" + i,"id", MainActivity.this.getPackageName()); //int resourceId = getResources().getIdentifier("button" + i,"id",this.getPackageName());
-        //String m = "R.id.button" + i;
-        //btn[i] = findViewById(resourceId);
 
-
-
-
-
-        mpr1 = mpr2 = mpr3 = true; // Set playback to the ready state
+        // Preset sound button color to playable
         btn[1].setBackgroundColor(getResources().getColor(R.color.button_resting_color));
         btn[2].setBackgroundColor(getResources().getColor(R.color.button_resting_color));
         btn[3].setBackgroundColor(getResources().getColor(R.color.button_resting_color));
 
-
-
-
-
+        // Set up file directory for recording
         mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName = new String[13];
 
-
-
-
-
+        // Long press listeners for the recording buttons
         btn[4].setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -174,10 +149,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
     public boolean CheckPermissions() {
         int resultExternalStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
         int resultRecordAudio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
@@ -193,83 +164,26 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
+    // Pre-Recorded Buttons
     public void pressedButton1 (View v) {
         //for preloaded sounds
-        // State: 0 Ready to record(empty) -- 1 Recording -- 2 Ready to play/re-record -- 3 Playing
-        if (mpr1) {
-            MediaPlayer mPlayer = new MediaPlayer();
-                mPlayer = MediaPlayer.create(this, R.raw.crowd);
-                mPlayer.setLooping(false);
-                mPlayer.seekTo(0);
-                mPlayer.setVolume(0.5f, 0.5f);
-            mPlayer.start();
-            mpr1 = false; // Set to the not ready state
-            btn[1].setBackgroundColor(getResources().getColor(R.color.button_active_color));
-
-            mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                public void onCompletion(MediaPlayer mPlayer) {
-                    mPlayer.release();
-                    btn[1].setBackgroundColor(getResources().getColor(R.color.button_resting_color));
-                    mpr1 = true; // Set to the ready state
-                }
-            });
-        }
+        pressPreSelectedSound(1,R.raw.crowd);
     }
 
     public void pressedButton2 (View v) {
         //for preloaded sounds
-        // State: 0 Ready to record(empty) -- 1 Recording -- 2 Ready to play/re-record -- 3 Playing
-        if (mpr2) {
-            MediaPlayer mPlayer = new MediaPlayer();
-                mPlayer = MediaPlayer.create(this, R.raw.laugh_2);
-                mPlayer.setLooping(false);
-                mPlayer.seekTo(0);
-                mPlayer.setVolume(0.5f, 0.5f);
-            mPlayer.start();
-            mpr2 = false;
-            btn[2].setBackgroundColor(getResources().getColor(R.color.button_active_color));
-
-            mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                public void onCompletion(MediaPlayer mPlayer) {
-                    mPlayer.release();
-                    btn[2].setBackgroundColor(getResources().getColor(R.color.button_resting_color));
-                    mpr2 = true;
-                }
-            });
-        }
+        pressPreSelectedSound(2,R.raw.laugh_2);
     }
 
     public void pressedButton3 (View v) {
         //for preloaded sounds
-        // State: 0 Ready to record(empty) -- 1 Recording -- 2 Ready to play/re-record -- 3 Playing
-        if (mpr3) {
-            MediaPlayer mPlayer = new MediaPlayer();
-            mPlayer = MediaPlayer.create(this, R.raw.clearing_throat_3);
-            mPlayer.setLooping(false);
-            mPlayer.seekTo(0);
-            mPlayer.setVolume(0.5f, 0.5f);
-            mPlayer.start();
-            mpr3 = false;
-            btn[3].setBackgroundColor(getResources().getColor(R.color.button_active_color));
-
-            mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                public void onCompletion(MediaPlayer mPlayer) {
-                    mPlayer.release();
-                    btn[3].setBackgroundColor(getResources().getColor(R.color.button_resting_color));
-                    mpr3 = true;
-                }
-            });
-        }
+        pressPreSelectedSound(3,R.raw.clearing_throat_3);
     }
 
 
 
 
-
-
+    // Recordable Buttons
     public void pressedButton4 (View v) {
         shortPress(4);
     }
@@ -308,24 +222,54 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    public void pressPreSelectedSound (int buttonNumber, int sound) {
+        // Check State: 0 Ready to record(empty) -- 1 Recording -- 2 Ready to play/re-record -- 3 Playing
+        switch (mpr[buttonNumber]) {
+            case 2:
+                // State: Ready to play
+                mPlayer[buttonNumber] = MediaPlayer.create(this, sound);
+                mPlayer[buttonNumber].setLooping(false);
+                mPlayer[buttonNumber].seekTo(0);
+                mPlayer[buttonNumber].setVolume(0.5f, 0.5f);
+                mPlayer[buttonNumber].start();
+                mpr[buttonNumber] = 3; // Playing
+                btn[buttonNumber].setBackgroundColor(getResources().getColor(R.color.button_active_color));
 
-
+                mPlayer[buttonNumber].setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    public void onCompletion(MediaPlayer mPlayer) {
+                        mPlayer.release();
+                        btn[buttonNumber].setBackgroundColor(getResources().getColor(R.color.button_resting_color));
+                        mpr[buttonNumber] = 2; // Ready to play
+                    }
+                });
+                break;
+            case 3:
+                // State: Playing
+                mPlayer[buttonNumber].release();
+                //btn[buttonNumber].setText(getResources().getText(R.string.buttonReadyToPlay));
+                btn[buttonNumber].setBackgroundColor(getResources().getColor(R.color.button_resting_color));
+                mpr[buttonNumber] = 2; // Ready to play/re-record
+                break;
+            default:
+        }
+    }
 
     public void shortPress (int buttonNumber) {
         // Check State: 0 Ready to record(empty) -- 1 Recording -- 2 Ready to play/re-record -- 3 Playing
         switch (mpr[buttonNumber]) {
             case 1:
-                // State: 0 Ready to record(empty) -- 1 Recording -- 2 Ready to play/re-record -- 3 Playing
+                // State: Recording
                 mpr[buttonNumber] = 2; // Ready to play/re-record
                 btn[buttonNumber].setText(getResources().getText(R.string.buttonReadyToPlay));
                 btn[buttonNumber].setBackgroundColor(getResources().getColor(R.color.button_resting_color));
                 mRecorder[buttonNumber].stop();
                 mRecorder[buttonNumber].release();
                 mRecorder[buttonNumber] = null;
+                recording = false; // Allow another recording
                 break;
 
             case 2:
-                // State: 0 Ready to record(empty) -- 1 Recording -- 2 Ready to play/re-record -- 3 Playing
+                // State: Ready to play/re-record
                 mpr[buttonNumber] = 3; // Playing
                 btn[buttonNumber].setText(getResources().getText(R.string.buttonPlaying));
                 btn[buttonNumber].setBackgroundColor(getResources().getColor(R.color.button_active_color));
@@ -344,6 +288,7 @@ public class MainActivity extends AppCompatActivity {
                     mPlayer[buttonNumber].release();
                     mPlayer[buttonNumber] = null;
                 }
+
                 mPlayer[buttonNumber].setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     public void onCompletion(MediaPlayer mPlayer) {
                         mPlayer.release();
@@ -354,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
                 });
                 break;
             case 3:
-                // State: 0 Ready to record(empty) -- 1 Recording -- 2 Ready to play/re-record -- 3 Playing
+                // State: Playing
                 mPlayer[buttonNumber].release();
                 btn[buttonNumber].setText(getResources().getText(R.string.buttonReadyToPlay));
                 btn[buttonNumber].setBackgroundColor(getResources().getColor(R.color.button_resting_color));
@@ -369,27 +314,29 @@ public class MainActivity extends AppCompatActivity {
         // Check State: 0 Ready to record(empty) -- 1 Recording -- 2 Ready to play/re-record -- 3 Playing
         switch (mpr[soundNumber]) {
             case 0:
-                //Ready to record(empty) -- 1 Recording
-                mpr[soundNumber] = 1;
-                mFileName[soundNumber] = mFilePath + "/Recording" + soundNumber + ".3gp";
-                if (CheckPermissions()) {
-                    // prevent double recording
+                // State: Ready to record(empty)
+                if (!recording) {
+                    recording = true; // prevent double recording
+                    mpr[soundNumber] = 1;
+                    mFileName[soundNumber] = mFilePath + "/Recording" + soundNumber + ".3gp";
+                    if (CheckPermissions()) {
 
-                    mRecorder[soundNumber] = new MediaRecorder();
-                    mRecorder[soundNumber].setAudioSource(MediaRecorder.AudioSource.MIC);
-                    mRecorder[soundNumber].setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-                    mRecorder[soundNumber].setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-                    mRecorder[soundNumber].setOutputFile(mFileName[soundNumber]);
-                    try {
-                        mRecorder[soundNumber].prepare();
-                    } catch (IOException e) {
-                        Log.e(LOG_TAG, "prepare() failed");
+                        mRecorder[soundNumber] = new MediaRecorder();
+                        mRecorder[soundNumber].setAudioSource(MediaRecorder.AudioSource.MIC);
+                        mRecorder[soundNumber].setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                        mRecorder[soundNumber].setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                        mRecorder[soundNumber].setOutputFile(mFileName[soundNumber]);
+                        try {
+                            mRecorder[soundNumber].prepare();
+                        } catch (IOException e) {
+                            Log.e(LOG_TAG, "prepare() failed");
+                        }
+                        btn.setText(getResources().getText(R.string.buttonRecording));
+                        btn.setBackgroundColor(getResources().getColor(R.color.button_recording_color));
+                        mRecorder[soundNumber].start();
+                    } else {
+                        RequestPermissions();
                     }
-                    btn.setText(getResources().getText(R.string.buttonRecording));
-                    btn.setBackgroundColor(getResources().getColor(R.color.button_recording_color));
-                    mRecorder[soundNumber].start();
-                } else {
-                    RequestPermissions();
                 }
                 break;
             case 2:
