@@ -1,5 +1,6 @@
 package com.example.mysoundboard;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -39,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Show the icon on the AppBar
+        ActionBar actionBar= getSupportActionBar();
+        actionBar.setIcon(R.drawable.ic_dots);
+        actionBar.setDisplayShowHomeEnabled(true);
 
         // Set up the arrays
         mpr = new int[13]; // State: 0 Ready to record(empty) -- 1 Recording -- 2 Ready to play/re-record -- 3 Playing
